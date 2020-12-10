@@ -22,7 +22,6 @@ object Standing {
       .groupMapReduce(_._1)(_._2.pts)(_ + _)
       .toList
 
-  //TODO: Be able to pass in different ranking function
   def computeRank(list: List[(String, Int)]): List[Standing] =
     list
       .groupBy(_._2)
