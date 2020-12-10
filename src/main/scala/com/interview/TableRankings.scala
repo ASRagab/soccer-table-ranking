@@ -4,7 +4,7 @@ import cats.effect.{ExitCode, IO, IOApp, Resource}
 import cats.implicits._
 import com.interview.rankings.{Matches, Parse, Standing}
 
-import scala.io.BufferedSource
+import scala.io.{BufferedSource, Codec}
 
 object TableRankings extends IOApp {
 
@@ -33,7 +33,7 @@ object TableRankings extends IOApp {
 
   def get(fileName: String): IO[BufferedSource] =
     IO {
-      scala.io.Source.fromResource(fileName)
+      scala.io.Source.fromFile(fileName, Codec.UTF8.name)
     }
 
   def printStandings(list: List[Standing]): Unit =
