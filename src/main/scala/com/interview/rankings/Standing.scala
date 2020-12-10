@@ -30,7 +30,7 @@ object Standing {
       .sortBy(-_._1)
       .foldLeft((1, List.empty[Standing])) {
         case ((rank, list), (_, teamPts)) =>
-          (rank + teamPts.length, list ++ teamPts.map { case (name, pts) => Standing(rank, name, pts) })
+          (rank + teamPts.length, list ++ teamPts.sortBy(_._1).map { case (name, pts) => Standing(rank, name, pts) })
       }
       ._2
 
