@@ -6,7 +6,7 @@ Download Release from [here](https://github.com/ASRagab/soccer-table-ranking/rel
 
 1. Untar directory
 2. `cd table-ranking-0.1`
-3. `./bin/table-ranking <filename>` (should be in the directory)
+3. `./bin/table-ranking <filename>` (should be in `table-ranking-0.1` directory)
 
 
 ## Test
