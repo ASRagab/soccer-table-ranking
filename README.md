@@ -19,4 +19,10 @@ Download Release from [here](https://github.com/ASRagab/soccer-table-ranking/rel
 1. Check that teams aren't playing each other
 2. Should be able to sort by a different method
 3. Collect more stats when parsing match in `Result` (total goals, goal difference)
+
+## Build
+
+After cloning:
+
+1. `sbt packArchive`
  
