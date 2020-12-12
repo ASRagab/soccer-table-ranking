@@ -29,11 +29,11 @@ class StandingSpec extends AnyFlatSpec with should.Matchers {
     val tabulated = List(
       Result(("one", Win), ("two", Loss)),
       Result(("two", Draw), ("three", Draw)),
-      Result(("four", Win), ("three", Draw)),
+      Result(("four", Win), ("three", Loss)),
       Result(("one", Draw), ("four", Draw))
     )
 
-    val expected = List(Standing(1, "four", 4), Standing(1, "one", 4), Standing(3, "three", 2), Standing(4, "two", 1))
+    val expected = List(Standing(1, "four", 4), Standing(1, "one", 4), Standing(3, "three", 1), Standing(3, "two", 1))
 
     getStandings(tabulated) shouldBe expected
   }
