@@ -1,6 +1,8 @@
 package com.interview.rankings
 
-import com.interview.rankings.Matches.{Outcome, Result}
+import cats.implicits.catsSyntaxSemigroup
+import com.interview.rankings.Matches.{GameResult, TeamResult}
+import com.interview.rankings.Rankings.RankState
 
 case class Standing(rank: Int, team: String, pts: Int)
 
@@ -11,26 +13,24 @@ object Standing {
     s"${standing.rank}. ${standing.team}, ${standing.pts} $ptsSuffix"
   }
 
-  def getStandings(tabulated: List[Result]): List[Standing] =
-    (linearizeResults _ andThen computePoints andThen computeRank)(tabulated)
+  def getStandings[T](ranker: RankState[T])(tabulated: List[GameResult]): List[Standing] =
+    (linearizeResults _ andThen computePoints andThen computeRank(ranker))(tabulated)
 
-  def linearizeResults(tabulated: List[Result]): List[(String, Outcome)] =
-    tabulated.flatMap(tab => List(tab.teamOne, tab.teamTwo))
+  def linearizeResults(tabulated: List[GameResult]): List[TeamResult] =
+    tabulated.flatMap(tab => List(tab.home, tab.away))
 
-  def computePoints(results: List[(String, Outcome)]): List[(String, Int)] =
+  def computePoints(results: List[TeamResult]): List[TeamResult] =
     results
-      .groupMapReduce(_._1)(_._2.pts)(_ + _)
+      .groupMapReduce(_.name)(_.outcome)(_ |+| _)
       .toList
+      .map { case (name, outcome) => TeamResult(name, outcome) }
 
-  def computeRank(list: List[(String, Int)]): List[Standing] =
+  def computeRank[T](ranker: RankState[T])(list: List[TeamResult]): List[Standing] =
     list
-      .groupBy(_._2)
+      .groupBy(_.outcome.pts)
       .toList
       .sortBy(-_._1)
-      .foldLeft((1, List.empty[Standing])) {
-        case ((rank, list), (_, teamPts)) =>
-          (rank + teamPts.length, list ++ teamPts.sortBy(_._1).map { case (name, pts) => Standing(rank, name, pts) })
-      }
-      ._2
-
+      .map(_._2)
+      .foldLeft(ranker) { case (acc, ties) => acc.next(ties) }
+      .full
 }

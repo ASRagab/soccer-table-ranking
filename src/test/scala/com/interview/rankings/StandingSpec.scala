@@ -7,6 +7,13 @@ import org.scalatest.matchers.should
 class StandingSpec extends AnyFlatSpec with should.Matchers {
   import Standing._
 
+  val tabulated = List(
+    GameResult(TeamResult("one", Win(3, 2)), TeamResult("two", Loss(1, -2))),
+    GameResult(TeamResult("two", Draw(2)), TeamResult("three", Draw(2))),
+    GameResult(TeamResult("four", Win(2, 1)), TeamResult("three", Loss(1, -1))),
+    GameResult(TeamResult("one", Draw(3)), TeamResult("four", Draw(3)))
+  )
+
   "render" should "correctly render a standing with multiple points" in {
     val standing = Standing(1, "FC Okay", 13)
 
@@ -25,24 +32,30 @@ class StandingSpec extends AnyFlatSpec with should.Matchers {
     render(standing) shouldBe "11. Sporting Odessa, 0 pts"
   }
 
-  "getStandings" should "get an ordered list of standings from a list of results" in {
-    val tabulated = List(
-      Result(("one", Win), ("two", Loss)),
-      Result(("two", Draw), ("three", Draw)),
-      Result(("four", Win), ("three", Draw)),
-      Result(("one", Draw), ("four", Draw))
-    )
+  "getStandings" should "get an ordered list of standings from a list of results and break ties by Name" in {
 
-    val expected = List(Standing(1, "four", 4), Standing(1, "one", 4), Standing(3, "three", 2), Standing(4, "two", 1))
+    val expected = List(Standing(1, "four", 4), Standing(1, "one", 4), Standing(3, "three", 1), Standing(3, "two", 1))
 
-    getStandings(tabulated) shouldBe expected
+    getStandings(Rankings.breakTiesWithName)(tabulated) shouldBe expected
+  }
+
+  "getStandings" should "get an ordered list of standings from a list of results and break ties by goal difference" in {
+    val expected = List(Standing(1, "one", 4), Standing(1, "four", 4), Standing(3, "three", 1), Standing(3, "two", 1))
+
+    getStandings(Rankings.breakTiesWithGoalDifference)(tabulated) shouldBe expected
+  }
+
+  "getStandings" should "get an ordered list of standings from a list of results and break ties with Dense Rank By Name" in {
+    val expected = List(Standing(1, "four", 4), Standing(1, "one", 4), Standing(2, "three", 1), Standing(2, "two", 1))
+
+    getStandings(Rankings.denseRankByName)(tabulated) shouldBe expected
   }
 
   it should "be okay with an empty list" in {
-    val tabulated = List.empty[Result]
+    val tabulated = List.empty[GameResult]
 
     val expected = List.empty[Standing]
 
-    getStandings(tabulated) shouldBe expected
+    getStandings(Rankings.breakTiesWithName)(tabulated) shouldBe expected
   }
 }

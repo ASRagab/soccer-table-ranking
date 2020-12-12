@@ -13,7 +13,7 @@ class MatchesSpec extends AnyFlatSpec with should.Matchers {
 
     val soccerMatch = SoccerMatch(teamOne, 8, teamTwo, 4)
 
-    val expected = Result((teamOne, Win), (teamTwo, Loss))
+    val expected = GameResult(TeamResult(teamOne, Win(8, 4)), TeamResult(teamTwo, Loss(4, -4)))
 
     getResult(soccerMatch) shouldBe expected
 
@@ -25,7 +25,7 @@ class MatchesSpec extends AnyFlatSpec with should.Matchers {
 
     val soccerMatch = SoccerMatch(teamOne, 4, teamTwo, 4)
 
-    val expected = Result((teamOne, Draw), (teamTwo, Draw))
+    val expected = GameResult(TeamResult(teamOne, Draw(4)), TeamResult(teamTwo, Draw(4)))
 
     getResult(soccerMatch) shouldBe expected
   }

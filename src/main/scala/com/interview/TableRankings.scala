@@ -2,7 +2,7 @@ package com.interview
 
 import cats.effect.{ExitCode, IO, IOApp, Resource}
 import cats.implicits._
-import com.interview.rankings.{Matches, Parse, Standing}
+import com.interview.rankings.{Matches, Parse, Rankings, Standing}
 
 import scala.io.{BufferedSource, Codec}
 
@@ -27,7 +27,7 @@ object TableRankings extends IOApp {
         .toList
         .sequence
         .map(_.map(Matches.getResult))
-        .map(Standing.getStandings)
+        .map(Standing.getStandings(Rankings.breakTiesWithName))
         .map(printStandings)
     }.flatMap(_.fold(error => IO(println(error.errorMessage)).as(ExitCode.Error), _ => IO(ExitCode.Success)))
 
