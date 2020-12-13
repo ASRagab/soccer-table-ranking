@@ -7,6 +7,13 @@ import org.scalatest.matchers.should
 class StandingSpec extends AnyFlatSpec with should.Matchers {
   import Standing._
 
+  val tabulated = List(
+    Result(("one", Win), ("two", Loss)),
+    Result(("two", Draw), ("three", Draw)),
+    Result(("four", Win), ("three", Loss)),
+    Result(("one", Draw), ("four", Draw))
+  )
+
   "render" should "correctly render a standing with multiple points" in {
     val standing = Standing(1, "FC Okay", 13)
 
@@ -26,12 +33,6 @@ class StandingSpec extends AnyFlatSpec with should.Matchers {
   }
 
   "getStandings" should "get an ordered list of standings from a list of results" in {
-    val tabulated = List(
-      Result(("one", Win), ("two", Loss)),
-      Result(("two", Draw), ("three", Draw)),
-      Result(("four", Win), ("three", Loss)),
-      Result(("one", Draw), ("four", Draw))
-    )
 
     val expected = List(Standing(1, "four", 4), Standing(1, "one", 4), Standing(3, "three", 1), Standing(3, "two", 1))
 
